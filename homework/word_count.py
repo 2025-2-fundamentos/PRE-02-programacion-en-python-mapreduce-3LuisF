@@ -14,11 +14,24 @@ from toolz.itertoolz import concat, pluck
 
 def copy_raw_files_to_input_folder(n):
     """Generate n copies of the raw files in the input folder"""
-
+    create_directory("files/input")
+    for file in glob.glob("files/raw/*"):
+        with open(file, "r", encoding="utf-8") as f:
+            text = f.read()
+        for i in range(1, n + 1):
+            filename =  f"{os.path.basename(file).split('.')[0]}_{i}.txt"
+            with open(f"files/input/{filename}", "w", encoding="utf-8") as f:
+                f.write(text)
 
 
 def load_input(input_directory):
     """Funcion load_input"""
+    sequence = []
+    files = glob.glob(f"{input_directory}/*")
+    with fileinput.input(files=files) as f:
+        for line in f:
+            sequence.append((fileinput.filename(), line))
+    return sequence
 
 
 def preprocess_line(x):
@@ -46,7 +59,11 @@ def reducer(sequence):
 
 def create_directory(directory):
     """Create Output Directory"""
-
+    if os.path.exists(directory):
+        for file in glob.glob(f"{directory}/*"):
+            os.remove(file)
+        os.rmdir(directory)
+    os.makedirs(directory)
 
 def save_output(output_directory, sequence):
     """Save Output"""
