@@ -37,12 +37,25 @@ def load_input(input_directory):
 def preprocess_line(x):
     """Preprocess the line x"""
 
+    """Preprocess the line x"""
+    text = x[1]
+    text = text.lower()
+    text = text.translate(str.maketrans("", "", string.punctuation))
+    text = text.replace("\n", "")
+    return (x[0], text)
 
 def map_line(x):
-    pass
+    x = preprocess_line(x)
+    x = x[1].split()
+    x = [(w, 1) for w in x[1].split()]
+    return x
+
 
 def mapper(sequence):
     """Mapper"""
+    sequence = map(map_line, sequence)
+    sequence = concat(sequence)
+    return sequence
 
 
 def shuffle_and_sort(sequence):
